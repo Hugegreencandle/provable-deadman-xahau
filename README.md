@@ -20,7 +20,8 @@ the prover itself. You can build and testnet-test every hook here; the formal pr
 (see "What is proven" and "How to reproduce" below).
 
 The longer writeup, with the full story of the bug and how the proof caught it, is in
-[WRITEUP.md](WRITEUP.md).
+[WRITEUP.md](WRITEUP.md). A follow-up on the self-re-arming variant, and where the proof stops and the
+ledger begins, is in [WRITEUP_SELF_REARM.md](WRITEUP_SELF_REARM.md).
 
 ## The bug the naive version has
 
