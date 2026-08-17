@@ -9,6 +9,9 @@ obvious version has, and the fact that only a proof caught it:
 
 - `deadman_seeded.c` — the shipping single-beneficiary switch (proven).
 - `deadman_seeded_multi.c` — the two-beneficiary inheritance split (proven).
+- `deadman_seeded_rearm.c` — the self-re-arming switch: it reschedules its own Cron so the switch
+  keeps watching for years with no external maintenance. See "Self-re-arming variant" for the exact
+  two-layer scope (structural proof plus a testnet-confirmed ledger fact).
 - `deadman_early_bug.c` — the naive version that releases EARLY. Shipped on purpose: build it, prove it,
   watch the prover refute it. This is the failure, out in the open.
 
@@ -53,6 +56,31 @@ so the lifetime distribution never exceeds `CAP` and each share is locked to its
 
 "Proven" means a specific invariant under a specific model. It is not an unqualified "safe."
 
+## Self-re-arming variant
+
+A Cron series is finite. Schedule a fixed number of checks and after the last one the switch goes
+quiet, which for a multi-year inactivity horizon is its own silent failure. `deadman_seeded_rearm.c`
+closes that at the hook: on every fire where the owner is still active, it emits one CronSet that
+schedules the next check, so the schedule perpetuates with nobody renewing it. It stops re-arming once
+the cap is spent.
+
+This variant rests on two different kinds of evidence, and they are stated separately on purpose:
+
+- **Layer 1, proven for all inputs.** The prover walks the emitted transaction field by field and
+  proves it is a structurally valid re-arming CronSet: the type is CronSet, a real RepeatCount field is
+  present and at least one, and no amount field is hidden in it. A hook that emits a malformed, or
+  value-bearing, or no-repeat CronSet is refuted with a counterexample. It does not trust the two type
+  bytes.
+- **Layer 2, confirmed on testnet, not provable from bytecode.** Whether the ledger accepts the emit
+  and REPLACES the schedule rather than stacking a second one is a fact about how xahaud applies a
+  CronSet, which no proof over the program can reach. Confirmed on testnet account
+  `rwzdLQH4DwksDXTNZDu5M3mjFgkC4JcStp`: the emitted CronSet applied with tesSUCCESS, a Cron object
+  appeared (repeat count 9 after the first fire, 60 second delay), and a separate probe confirmed the
+  replace-not-stack behavior.
+
+So schedule-liveness of the program is proven, and the on-ledger apply is confirmed on testnet. Neither
+is hidden behind the other, and neither is called "proven" when it is not.
+
 ## Honest edges (a proof does not remove these)
 
 - **Liveness** — the proofs bound what the hook *can* do (safety); they do not by themselves show the
@@ -67,6 +95,8 @@ so the lifetime distribution never exceeds `CAP` and each share is locked to its
   `CAP` (8B BE total), `TMO` (8B BE inactivity timeout, in ledger seconds).
 - `deadman_seeded_multi.c` — `PA1`/`PA2` (two 20B beneficiaries), `AM1`/`AM2` (8B BE drops each),
   `CAP`, `TMO`. One firing pays each beneficiary its amount; `CAP` bounds the lifetime total.
+- `deadman_seeded_rearm.c` — same parameters as `deadman_seeded.c` (`PAY`/`AMT`/`CAP`/`TMO`); it adds
+  the self-rescheduling CronSet emit described above.
 - HookState (both): `{0x01}` cumulative paid, `{0x02}` last owner-activity time.
 - Fails closed on any decode / state / overflow / time anomaly. It is a spending authority: when in
   doubt, no release.
