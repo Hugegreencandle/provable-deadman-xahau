@@ -1,0 +1,140 @@
+connected wss://xahau-test.net
+[faucet:owner] funded r4P1Xr4UYwmDCk4fNirh9ZrU9MJFdBj8jZ bal=1000
+[faucet:bene] you must wait 60 seconds before requesting again -> wait 63s
+[faucet:bene] funded rNtRzptfYjbHmKwVD476cuKD8A7aaTVzr2 bal=1000
+owner=r4P1Xr4UYwmDCk4fNirh9ZrU9MJFdBj8jZ  beneficiary=rNtRzptfYjbHmKwVD476cuKD8A7aaTVzr2
+TMO=30s  AMT=1000000  CAP=1000000  cron: every 20s x4
+bytecode HookHash=6AD641663C63EF00405BA35C2F25BCFECCCE25298AA4DB712A2CB9CD6A30FB53
+[SetHook] hash=D77417830209D7145FBD448DAB16D599D076AEF4F999562F15C006433E30F0A5 seq=840115613 engine=tesSUCCESS (The transaction was applied. Only final in a validated ledger.)
+PASS  deploy deadman_seeded (HookOn = Payment + Cron)
+      tesSUCCESS  tx=D77417830209D7145FBD448DAB16D599D076AEF4F999562F15C006433E30F0A5
+[AccountSet(asfTshCollect)] hash=533E5D4C90DBFC486EE768D849C259115D6247460DC94AFE2AAD66A8FCCA5F7C seq=840115614 engine=tesSUCCESS (The transaction was applied. Only final in a validated ledger.)
+PASS  enable asfTshCollect on the owner account
+      tesSUCCESS  tx=533E5D4C90DBFC486EE768D849C259115D6247460DC94AFE2AAD66A8FCCA5F7C
+[Arm] hash=F124D2A333B07DD181C7214BBA6E4ED05737E5A043B3B37F5D517F8E0B444036 seq=840115615 engine=tesSUCCESS (The transaction was applied. Only final in a validated ledger.)
+PASS  arm the switch with an owner Payment
+      tesSUCCESS  tx=F124D2A333B07DD181C7214BBA6E4ED05737E5A043B3B37F5D517F8E0B444036
+PASS  activity slot 0x02 now exists
+      5 state entr(ies)
+[CronSet] hash=821DDD4E58B3992F23D95002C56F194978F008957A5143E3F7C1A10C781BACC8 seq=840115616 engine=tesSUCCESS (The transaction was applied. Only final in a validated ledger.)
+PASS  schedule the Cron series
+      tesSUCCESS  tx=821DDD4E58B3992F23D95002C56F194978F008957A5143E3F7C1A10C781BACC8
+
+waiting 125s for the Cron series...
+
+Cron fires observed: 5
+  fire 1: emits=0 code=130  "owner still active (within timeout) — no release"
+  fire 2: emits=0 code=130  "owner still active (within timeout) — no release"
+  fire 3: emits=1 code=162  "dead-man-switch: released one allotment after the inactivity timeout"
+  fire 4: emits=0 code=155  "allocation exhausted or invalid — no release"
+  fire 5: emits=0 code=155  "allocation exhausted or invalid — no release"
+PASS  at least one Cron fire reached the hook
+      5 HookExecution(s) on Cron transactions
+PASS  a fire INSIDE the timeout released nothing
+      2 fire(s) accepted with no emit while within TMO
+PASS  ★ a fire PAST the timeout released exactly one allotment
+      1 fire(s) emitted (expected exactly 1, since CAP == AMT)
+PASS  further fires were capped, not repeated payouts
+      2 fire(s) reported the allocation exhausted
+PASS  beneficiary balance increased by exactly AMT
+      delta=1000000 drops (expected 1000000)
+PASS  cumulative-paid slot 0x01 == AMT
+      slot 0x01 = 1000000 drops
+
+11/11 PASS
+{
+  "hookHash": "6AD641663C63EF00405BA35C2F25BCFECCCE25298AA4DB712A2CB9CD6A30FB53",
+  "owner": "r4P1Xr4UYwmDCk4fNirh9ZrU9MJFdBj8jZ",
+  "bene": "rNtRzptfYjbHmKwVD476cuKD8A7aaTVzr2",
+  "armedAt": 1786800495,
+  "fires": [
+    {
+      "code": "130",
+      "msg": "owner still active (within timeout) — no release",
+      "emitted": 0,
+      "ledger": 11456205
+    },
+    {
+      "code": "130",
+      "msg": "owner still active (within timeout) — no release",
+      "emitted": 0,
+      "ledger": 11456211
+    },
+    {
+      "code": "162",
+      "msg": "dead-man-switch: released one allotment after the inactivity timeout",
+      "emitted": 1,
+      "ledger": 11456218
+    },
+    {
+      "code": "155",
+      "msg": "allocation exhausted or invalid — no release",
+      "emitted": 0,
+      "ledger": 11456224
+    },
+    {
+      "code": "155",
+      "msg": "allocation exhausted or invalid — no release",
+      "emitted": 0,
+      "ledger": 11456231
+    }
+  ],
+  "delta": "1000000",
+  "results": [
+    {
+      "name": "deploy deadman_seeded (HookOn = Payment + Cron)",
+      "pass": true,
+      "detail": "tesSUCCESS  tx=D77417830209D7145FBD448DAB16D599D076AEF4F999562F15C006433E30F0A5"
+    },
+    {
+      "name": "enable asfTshCollect on the owner account",
+      "pass": true,
+      "detail": "tesSUCCESS  tx=533E5D4C90DBFC486EE768D849C259115D6247460DC94AFE2AAD66A8FCCA5F7C"
+    },
+    {
+      "name": "arm the switch with an owner Payment",
+      "pass": true,
+      "detail": "tesSUCCESS  tx=F124D2A333B07DD181C7214BBA6E4ED05737E5A043B3B37F5D517F8E0B444036"
+    },
+    {
+      "name": "activity slot 0x02 now exists",
+      "pass": true,
+      "detail": "5 state entr(ies)"
+    },
+    {
+      "name": "schedule the Cron series",
+      "pass": true,
+      "detail": "tesSUCCESS  tx=821DDD4E58B3992F23D95002C56F194978F008957A5143E3F7C1A10C781BACC8"
+    },
+    {
+      "name": "at least one Cron fire reached the hook",
+      "pass": true,
+      "detail": "5 HookExecution(s) on Cron transactions"
+    },
+    {
+      "name": "a fire INSIDE the timeout released nothing",
+      "pass": true,
+      "detail": "2 fire(s) accepted with no emit while within TMO"
+    },
+    {
+      "name": "★ a fire PAST the timeout released exactly one allotment",
+      "pass": true,
+      "detail": "1 fire(s) emitted (expected exactly 1, since CAP == AMT)"
+    },
+    {
+      "name": "further fires were capped, not repeated payouts",
+      "pass": true,
+      "detail": "2 fire(s) reported the allocation exhausted"
+    },
+    {
+      "name": "beneficiary balance increased by exactly AMT",
+      "pass": true,
+      "detail": "delta=1000000 drops (expected 1000000)"
+    },
+    {
+      "name": "cumulative-paid slot 0x01 == AMT",
+      "pass": true,
+      "detail": "slot 0x01 = 1000000 drops"
+    }
+  ]
+}
