@@ -19,6 +19,9 @@ Not included: a switch for N>2 beneficiaries (its conservation proof is a separa
 the prover itself. You can build and testnet-test every hook here; the formal proof is our attestation
 (see "What is proven" and "How to reproduce" below).
 
+The longer writeup, with the full story of the bug and how the proof caught it, is in
+[WRITEUP.md](WRITEUP.md).
+
 ## The bug the naive version has
 
 The obvious way to write this reads the stored "last activity" time and, if none exists, treats it as
